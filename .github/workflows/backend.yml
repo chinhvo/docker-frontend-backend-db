@@ -69,8 +69,18 @@ jobs:
       with:
         task-definition: ./deployments/ecs-dev-backend-task-definition.json
         container-name: dev-backend
+        wait-for-service-stability: true
         image: $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
         environment-variables: |
           AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION=${{ env.AWS_REGION }}    
+
+    # Step 7: Deploy the new task definition to the ECS service
+    - name: Deploy to ECS service
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+      with:
+        task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+        service: dev-backend-service-q1dlri6e
+        cluster: dev-backend-cluster
+        wait-for-service-stability: true          
