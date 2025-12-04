@@ -58,6 +58,19 @@ jobs:
         echo "Building Docker image with tag: $TAG"
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
+        
+    # Step 5.1: Download current ECS task definition
+    - name: Download current task definition
+      run: |
+        aws ecs describe-task-definition \
+          --task-definition dev-backend \
+          --query taskDefinition > task-definition.json
+
+    # Step 5.2: Clean the task definition by removing metadata
+    - name: Clean task definition
+      run: |
+        jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .deregisteredAt, .registeredBy, .enableFaultInjection)' task-definition.json > cleaned-task-definition.json
+        mv cleaned-task-definition.json task-definition.json
 
     - name: Render updated task definition
       id: render-task-def
