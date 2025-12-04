@@ -59,10 +59,18 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
 
-    - name: 🚀 Deploy to Amazon ECS
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+    - name: Render updated task definition
+      id: render-task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY : ${{vars.ECR_BACKEND_REPOSITORY}}
+        AWS_REGION: ap-southeast-2      
       with:
         task-definition: ./deployments/ecs-dev-backend-task-definition.json
-        service: dev-backend-service-q1dlri6e
-        cluster: dev-backend-cluster
-        wait-for-service-stability: true        
+        container-name: backend
+        image: $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
+        environment-variables: |
+          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION=${{ env.AWS_REGION }}    
