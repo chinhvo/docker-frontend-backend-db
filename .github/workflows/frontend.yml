@@ -54,7 +54,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY : ${{vars.ECR_FRONTEND_REPOSITORY}}
       run: |
-        cd fromtend
+        cd frontend
         echo "Building Docker image with tag: $TAG"
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
