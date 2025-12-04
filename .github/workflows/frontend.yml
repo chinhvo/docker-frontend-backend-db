@@ -53,7 +53,6 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
-        echo "Building Docker image with tag: $TAG"
-        docker build -t "${{ env.FRONTEND }}" .
+        echo "Building Docker image with tag: ${{TAG}}"
         docker build -t $ECR_REGISTRY/${{vars.ECR_FRONTEND_REPOSITORY}}:$TAG .
         docker push $ECR_REGISTRY/${{vars.ECR_FRONTEND_REPOSITORY}}:$TAG
