@@ -58,3 +58,22 @@ jobs:
         # Also tag and push as latest
         docker tag $IMAGE_URI $ECR_REGISTRY/$ECR_REPOSITORY:latest
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+
+# Step 4.1: Login to Amazon ECR
+- name: Login to Amazon ECR
+  run: |
+    aws ecr get-login-password --region $AWS_REGION \
+    | docker login --username AWS --password-stdin ${{ env.AWS_REGISTRY_URL }}
+
+# Step 4.2: Build Docker image and tag it
+- name: Build Docker image and tag it
+  run: |
+    echo "Building Docker image with tag: $TAG"
+    docker build -t "${{ env.REPOSITORY_NAME }}" .
+    docker tag "${{ env.REPOSITORY_NAME }}" "${{ env.AWS_REGISTRY_URL }}/${{ env.REPOSITORY_NAME }}:$TAG"
+
+# Step 4.3: Push Docker image to Amazon ECR
+- name: Push Docker image to Amazon ECR
+  run: |
+    docker push "${{ env.AWS_REGISTRY_URL }}/${{ env.REPOSITORY_NAME }}:$TAG"
