@@ -58,3 +58,11 @@ jobs:
         echo "Building Docker image with tag: $TAG"
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
+
+    - name: 🚀 Deploy to Amazon ECS
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+      with:
+        task-definition: ./deployments/ecs-dev-backend-task-definition.json
+        service: dev-backend-service-q1dlri6e
+        cluster: dev-backend-cluster
+        wait-for-service-stability: true        
