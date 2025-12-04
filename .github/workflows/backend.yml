@@ -80,7 +80,7 @@ jobs:
         ECR_REPOSITORY : ${{vars.ECR_BACKEND_REPOSITORY}}
         AWS_REGION: ap-southeast-2      
       with:
-        task-definition: ./deployments/ecs-dev-backend-task-definition.json
+        task-definition: task-definition.json
         container-name: dev-backend
         wait-for-service-stability: true
         image: $ECR_REGISTRY/$ECR_REPOSITORY:$TAG
