@@ -72,6 +72,7 @@ jobs:
         jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .deregisteredAt, .registeredBy, .enableFaultInjection)' task-definition.json > cleaned-task-definition.json
         mv cleaned-task-definition.json task-definition.json
 
+    # Step 6: Render updated ECS task definition with new Docker image
     - name: Render updated task definition
       id: render-task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
